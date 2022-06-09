@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!--搜索表单-->
+        <el-form :inline="true" :model="brand" class="demo-form-inline">
+            <el-form-item label="当前状态">
+                <el-select v-model="brand.status" clearable placeholder="当前状态">
+                    <el-option label="启用" value="1"></el-option>
+                    <el-option label="禁用" value="0"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="企业名称">
+                <el-input v-model="brand.companyName" placeholder="企业名称"></el-input>
+            </el-form-item>
+            <el-form-item label="品牌名称">
+                <el-input v-model="brand.brandName" placeholder="品牌名称"></el-input>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">查询</el-button>
+            </el-form-item>
+        </el-form>
+
+        <!--批量删除和新增-->
+        <el-button type="danger" plain>批量删除</el-button>
+        <el-button type="primary" plain @click="dialogFormVisible = true">新增</el-button>
+
+        <!--新增数据表-->
+        <el-dialog title="编辑品牌" :visible.sync="dialogFormVisible">
+            <el-form :model="brand" label-width="120px">
+                <el-form-item label="品牌名称：">
+                    <el-input v-model="brand.brandName"></el-input>
+                </el-form-item>
+                <el-form-item label="企业名称：">
+                    <el-input v-model="brand.companyName"></el-input>
+                </el-form-item>
+                <el-form-item label="排序：">
+                    <el-input v-model="brand.ordered"></el-input>
+                </el-form-item>
+                <el-form-item label="备注：">
+                    <el-input type="textarea" v-model="brand.description"></el-input>
+                </el-form-item>
+                <el-form-item label="状态：">
+                    <el-switch v-model="brand.status" active-value="1" active-text="启用" inactive-value="0"
+                        inactive-text="禁用"></el-switch>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="addBrand">提 交</el-button>
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+
+
+
+        <!--数据表-->
+        <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
+            @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
+            <!--多选框-->
+            <el-table-column type="selection" width="55">
+            </el-table-column>
+            <el-table-column type="index" width="50">
+            </el-table-column>
+            <el-table-column prop="brandName" label="品牌名称" align="center">
+            </el-table-column>
+            <el-table-column prop="companyName" label="公司名称" align="center">
+            </el-table-column>
+            <el-table-column prop="ordered" label="排序" align="center">
+            </el-table-column>
+            <el-table-column prop="description" label="描述" align="center">
+            </el-table-column>
+            <el-table-column prop="status" label="状态" align="center">
+            </el-table-column>
+            <el-table-column label="操作" align="center">
+                <template slot-scope="scope">
+                    <el-button type="primary">修改</el-button>
+                    <el-button type="danger">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+
+        <!--分页查询条-->
+        <div class="block">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="5"
+                layout="total, sizes, prev, pager, next, jumper" :total="400">
+            </el-pagination>
+        </div>
+    </div>
+
+</body>
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+<script>
+    new Vue({
+        el: "#app",
+        methods: {
+            //定义行的颜色
+            tableRowClassName({ row, rowIndex }) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+
+            //多选框对应的函数
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+
+            //查询按钮对应的函数
+            onSubmit() {
+                console.log('submit!');
+            },
+
+            //新增按钮对应的函数
+            addBrand() {
+                console.log('Add brand');
+            },
+
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+            },
+
+        },
+        data() {
+            return {
+                //Data model
+                brand: {
+                    status: '',
+                    brandName: '',
+                    companyName: '',
+                    id: "",
+                    ordered: "",
+                    description: ""
+                },
+
+                //prop属性需要和每个键相对应
+                //prop = v-model
+                tableData: [{
+                    brandName: '华为',
+                    companyName: '华为',
+                    ordered: 1,
+                    description: '华为',
+                    status: '启用'
+                }, {
+                    brandName: '华为',
+                    companyName: '华为',
+                    ordered: 1,
+                    description: '华为',
+                    status: '启用'
+                }, {
+                    brandName: '华为',
+                    companyName: '华为',
+                    ordered: 1,
+                    description: '华为',
+                    status: '启用'
+                }, {
+                    brandName: '华为',
+                    companyName: '华为',
+                    ordered: 1,
+                    description: '华为',
+                    status: '启用'
+                }],
+                dialogFormVisible: false,
+
+                //当前页
+                currentPage: 1,
+            }
+        }
+    })
+</script>
+
+</html>
