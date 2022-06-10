@@ -1,3 +1,2 @@
-*.js linguist-detectable=false
-*.html linguist-detectable=false
+src/main/webapp/** linguist-detectable=false
 *.java linguist-detectable=true
